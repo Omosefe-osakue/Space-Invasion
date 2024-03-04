@@ -59,6 +59,13 @@ score = 0
 font_style = pygame.font.Font('freesansbold.ttf', 32)
 text_x = 10
 text_y = 10
+ 
+# End of game txt
+end_font = pygame.font.Font('freesansbold.ttf', 40)
+
+def final_text():
+    my_final_text = end_font.render("GAME OVER", True, (255,255,255))
+    screen.blit(my_final_text, (200,200))
 
 # Show score function
 def show_score(x,y):
@@ -89,6 +96,7 @@ def is_collision(x_1,x_2,y_1,y_2):
     
 # Game loop
 running = True
+game_over = False
 while running:
     # Set screen color
     # screen.fill((200,100,50))
@@ -137,7 +145,12 @@ while running:
 
      #Modify enemy location
     for enem in range(number_of_enemies):   
+        # end of game
+        if enemy_y[enem] > 400:
+            game_over = True
+            break
         enemy_x[enem] += enemy_x_change[enem]
+
         # Set Limit boundaries
         if enemy_x[enem] <= 0:
             enemy_x_change[enem] = 0.75
@@ -149,6 +162,8 @@ while running:
         #Collision
         collision = is_collision(enemy_x[enem],enemy_y[enem],bullet_x,bullet_y)
         if collision:
+            collision_sound = mixer.Sound('punch.mp3')
+            collision_sound.play()
             bullet_y = 470
             visible_bullet = False
             score += 1
@@ -160,7 +175,13 @@ while running:
     player(player_x,player_y)
 
     show_score(text_x,text_y)
-    
+
+    #Show final text when game is over
+    if game_over:
+        final_text()
+        pygame.display.update()
+        break
+
     # Update
     pygame.display.update()
     
